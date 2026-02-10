@@ -75,36 +75,19 @@ Landing Page → "Build Your Passport" CTA
 
 ---
 
-## Data Model (3 tables)
+## Data Model
 
-```sql
--- Core user record (managed by auth provider)
-users
-  id          uuid primary key
-  email       text unique not null
-  name        text
-  avatar_url  text
-  created_at  timestamptz default now()
+See **[DATA_MODEL.md](./DATA_MODEL.md)** for the full Career Event schema, examples, and Aleph Cloud mapping.
 
--- The generated career passport
-passports
-  id          uuid primary key
-  user_id     uuid references users(id)
-  summary     text                          -- AI-generated professional summary
-  skills      jsonb                         -- [{name, category, source}]
-  timeline    jsonb                         -- [{title, org, start, end, type}]
-  is_public   boolean default true
-  slug        text unique not null          -- for /passport/:slug URLs
-  created_at  timestamptz default now()
-  updated_at  timestamptz default now()
+**Summary — 3 Aleph document types (no SQL):**
 
--- Raw questionnaire answers (for regeneration)
-questionnaire_responses
-  id          uuid primary key
-  user_id     uuid references users(id)
-  answers     jsonb                         -- {question_key: answer_value}
-  created_at  timestamptz default now()
-```
+| Data | Aleph Primitive | Post Type |
+|------|----------------|-----------|
+| User profile | **Aggregate** (key: `profile`) | — |
+| Career events (job, caregiving, etc.) | **Post** | `career-event` |
+| Questionnaire answers | **Post** | `questionnaire` |
+| Passport metadata (summary, slug) | **Aggregate** (key: `passport`) | — |
+| Avatar / files | **Store** | — |
 
 ---
 
